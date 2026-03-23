@@ -413,7 +413,7 @@ export default function LinkDashboard() {
             </div>
             <div className={`ml-4 pl-4 border-l ${th.divider} flex flex-col justify-center`}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 2.5</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 2.6</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -696,6 +696,9 @@ export default function LinkDashboard() {
             { icon: '🌐', title: 'Favicon als Icon', text: 'Im Kachel-Formular auf "🌐 Favicon" klicken, um das Logo der Website automatisch als Icon zu laden.' },
             { icon: '📤', title: 'Export & Import', text: 'Über ⚙️ kannst du alle Kacheln als JSON-Datei exportieren und auf einem anderen Gerät wieder importieren.' },
             { icon: '🌙', title: 'Theme wechseln', text: 'Über den 🌙-Button oben rechts kannst du zwischen Dunkel, Hell und Automatisch (Systemeinstellung) wechseln.' },
+            { icon: '🗂️', title: 'Gruppen anzeigen', text: 'Über ⚙️ → Checkbox "Gruppen anzeigen" werden Kacheln nach ihrer Gruppe mit Trennlinien gegliedert. Standard: aus.' },
+            { icon: '👁️', title: 'Kacheln ausblenden', text: 'Im Bearbeitungsmodus auf 👁️ klicken, um eine Kachel auszublenden. Ausgeblendete Kacheln bleiben gespeichert und können über ⚙️ → "Versteckte anzeigen" wieder sichtbar gemacht werden.' },
+            { icon: '⛶', title: 'Vollbild-Modus', text: 'Den Vollbild-Button kann über ⚙️ → Checkbox "Vollbild-Button" eingeblendet werden. Ein Klick darauf öffnet das Dashboard im Browser-Vollbild. Beenden mit ESC oder erneutem Klick.' },
           ].map(item => (
             <div key={item.title} className={`flex gap-3 p-3 rounded-xl ${th.themeInactiveBg}`}>
               <span className="text-2xl flex-shrink-0">{item.icon}</span>
@@ -706,7 +709,7 @@ export default function LinkDashboard() {
             </div>
           ))}
         </div>
-        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 2.5 • RHEINISCHE ROST Dashboard</div>
+        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 2.6 • RHEINISCHE ROST Dashboard</div>
       </div>
     </div>
   )}
