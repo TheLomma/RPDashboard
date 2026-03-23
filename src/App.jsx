@@ -394,6 +394,20 @@ export default function LinkDashboard() {
 
   const [showWartung, setShowWartung] = useState(false)
 
+  const [logoClickCount, setLogoClickCount] = useState(0)
+  const [easterEgg, setEasterEgg] = useState(false)
+  const logoClickTimer = useState(null)
+
+  const handleLogoClick = () => {
+    const newCount = logoClickCount + 1
+    setLogoClickCount(newCount)
+    if (newCount >= 5) {
+      setLogoClickCount(0)
+      setEasterEgg(true)
+      setTimeout(() => setEasterEgg(false), 7000)
+    }
+  }
+
   const closeMenus = () => { setShowThemeMenu(false); setShowSettingsMenu(false) }
 
   const ThemeIcon = () => {
@@ -407,13 +421,13 @@ export default function LinkDashboard() {
       <header className={`sticky top-0 z-40 backdrop-blur-xl border-b ${th.header} transition-colors duration-300`}>
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex flex-col leading-none select-none">
+            <div className="flex flex-col leading-none select-none cursor-pointer" onClick={e => { e.stopPropagation(); handleLogoClick() }}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 900, fontSize: "1.35rem", letterSpacing: "-0.01em", color: th.logoText, lineHeight: 1.1 }}>RHEINISCHE ROST</span>
               <div style={{ height: "4px", background: "#F97316", borderRadius: "1px", marginTop: "3px" }} />
             </div>
             <div className={`ml-4 pl-4 border-l ${th.divider} flex flex-col justify-center`}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 2.6</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 2.7</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -709,8 +723,31 @@ export default function LinkDashboard() {
             </div>
           ))}
         </div>
-        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 2.6 • RHEINISCHE ROST Dashboard</div>
+        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 2.7 • RHEINISCHE ROST Dashboard</div>
       </div>
+    </div>
+  )}
+  {easterEgg && (
+    <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
+      {Array.from({ length: 60 }).map((_, i) => (
+        <span
+          key={i}
+          style={{
+            position: 'absolute',
+            left: `${Math.random() * 100}%`,
+            top: `-${Math.random() * 80 + 20}px`,
+            fontSize: `${Math.random() * 24 + 16}px`,
+            animation: `fall ${Math.random() * 1 + 1}s linear ${Math.random() * 1}s forwards`,
+            opacity: 0,
+          }}
+        >📰</span>
+      ))}
+      <style>{`
+        @keyframes fall {
+          0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+          100% { transform: translateY(110vh) rotate(${Math.random() > 0.5 ? '' : '-'}${Math.floor(Math.random() * 360)}deg); opacity: 0.8; }
+        }
+      `}</style>
     </div>
   )}
   {showAdd && <TileForm tile={newTile} setTile={setNewTile} onSave={addTile} onCancel={() => setShowAdd(false)} saveLabel="Hinzufügen" th={th} />}
