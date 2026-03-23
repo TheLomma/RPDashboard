@@ -280,7 +280,7 @@ export default function LinkDashboard() {
     localStorage.setItem("rp-list-view", listView)
   }, [listView])
 
-  const [showSearch, setShowSearch] = useState(() => localStorage.getItem("rp-show-search") !== "false")
+  const [showSearch, setShowSearch] = useState(() => localStorage.getItem("rp-show-search") === "true")
 
   useEffect(() => {
     localStorage.setItem("rp-show-search", showSearch)
@@ -327,6 +327,10 @@ export default function LinkDashboard() {
 
   const [showHelp, setShowHelp] = useState(false)
 
+  const [showBackup, setShowBackup] = useState(false)
+
+  const [showWartung, setShowWartung] = useState(false)
+
   const closeMenus = () => { setShowThemeMenu(false); setShowSettingsMenu(false) }
 
   const ThemeIcon = () => {
@@ -346,7 +350,7 @@ export default function LinkDashboard() {
             </div>
             <div className={`ml-4 pl-4 border-l ${th.divider} flex flex-col justify-center`}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 1.8</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 2.0</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -393,23 +397,21 @@ export default function LinkDashboard() {
                     </label>
 
                     <div className={`my-1 border-t ${th.divider}`} />
+                    <div className={`px-3 py-1.5 text-xs font-semibold uppercase tracking-widest ${th.label}`}>💾 Backup</div>
                     <button className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} onClick={exportTiles}>
-                      <span>📤</span> Kacheln exportieren
+                      <span>📤</span> Exportieren
                     </button>
                     <label className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors cursor-pointer ${th.themeInactiveBg}`}>
-                      <span>📥</span> Kacheln importieren
+                      <span>📥</span> Importieren
                       <input type="file" accept=".json" className="hidden" onChange={importTiles} />
                     </label>
+                    <div className={`my-1 border-t ${th.divider}`} />
                     <button className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} onClick={() => { setShowHelp(true); setShowSettingsMenu(false) }}>
-                      <span>❓</span> Anleitung & Tutorial
+                      <span>❓</span> Anleitung
                     </button>
                     <div className={`my-1 border-t ${th.divider}`} />
-                    <button className="w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors text-yellow-500 hover:bg-yellow-500 hover:bg-opacity-10" onClick={() => { localStorage.clear(); window.location.reload() }}>
-                      <span>🗑️</span> Cache leeren & neu laden
-                    </button>
-                    <div className={`my-1 border-t ${th.divider}`} />
-                    <button className="w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors text-red-500 hover:bg-red-500 hover:bg-opacity-10" onClick={resetTiles}>
-                      <span>🔄</span> Auf Standard zurücksetzen
+                    <button className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${th.themeInactiveBg}`} onClick={() => { setShowWartung(true); setShowSettingsMenu(false) }}>
+                      <span>🛠️</span> Wartung
                     </button>
                   </div>
                 </div>
@@ -422,8 +424,17 @@ export default function LinkDashboard() {
         {filteredTiles.length === 0 ? (
           <div className={`text-center py-24 ${th.emptyText}`}>
             <p className="text-5xl mb-4">📫</p>
-            <p className="text-lg">Keine Kacheln gefunden.</p>
-            <button className="mt-4 text-blue-400 hover:text-blue-300 text-sm" onClick={() => { setSearchQuery(""); setShowAdd(true) }}>Neue Kachel hinzufügen</button>
+            {searchQuery ? (
+              <>
+                <p className="text-lg">Keine Treffer für "{searchQuery}"</p>
+                <button className="mt-4 text-blue-400 hover:text-blue-300 text-sm flex items-center gap-2 mx-auto" onClick={() => setSearchQuery("")}>✕ Suche zurücksetzen</button>
+              </>
+            ) : (
+              <>
+                <p className="text-lg">Keine Kacheln gefunden.</p>
+                <button className="mt-4 text-blue-400 hover:text-blue-300 text-sm" onClick={() => { setSearchQuery(""); setShowAdd(true) }}>Neue Kachel hinzufügen</button>
+              </>
+            )}
           </div>
         ) : listView ? (
           <div className={`rounded-2xl border overflow-hidden ${th.panelBg}`}>
@@ -509,11 +520,64 @@ export default function LinkDashboard() {
       </div>
     </div>
   )}
+  {showWartung && (
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4" onClick={() => setShowWartung(false)}>
+      <div className={`rounded-2xl p-6 w-full max-w-sm border shadow-2xl ${th.modal}`} onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className={`text-lg font-bold flex items-center gap-2 ${th.text}`}>🛠️ Wartung</h3>
+          <button className={`p-1.5 rounded-lg transition-colors border ${th.btn}`} onClick={() => setShowWartung(false)}>✕</button>
+        </div>
+        <div className="space-y-3">
+          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-yellow-500 border-opacity-40 bg-yellow-500 bg-opacity-10 hover:bg-opacity-20 transition-colors" onClick={() => { if (window.confirm('Cache leeren und neu laden?')) { localStorage.clear(); window.location.reload() } }}>
+            <span className="text-2xl">🗑️</span>
+            <div className="text-left">
+              <p className="font-medium text-sm text-yellow-500">Cache leeren & neu laden</p>
+              <p className={`text-xs ${th.label}`}>Alle gespeicherten Daten löschen</p>
+            </div>
+          </button>
+          <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl border border-red-500 border-opacity-40 bg-red-500 bg-opacity-10 hover:bg-opacity-20 transition-colors" onClick={() => { resetTiles(); setShowWartung(false) }}>
+            <span className="text-2xl">🔄</span>
+            <div className="text-left">
+              <p className="font-medium text-sm text-red-500">Auf Standard zurücksetzen</p>
+              <p className={`text-xs ${th.label}`}>Alle Kacheln auf Standardwerte zurücksetzen</p>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  )}
+  {showBackup && (
+    <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4" onClick={() => setShowBackup(false)}>
+      <div className={`rounded-2xl p-6 w-full max-w-sm border shadow-2xl ${th.modal}`} onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-6">
+          <h3 className={`text-lg font-bold flex items-center gap-2 ${th.text}`}>💾 Backup</h3>
+          <button className={`p-1.5 rounded-lg transition-colors border ${th.btn}`} onClick={() => setShowBackup(false)}>✕</button>
+        </div>
+        <div className="space-y-3">
+          <button className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors ${th.themeInactiveBg}`} onClick={() => { exportTiles(); setShowBackup(false) }}>
+            <span className="text-2xl">📤</span>
+            <div className="text-left">
+              <p className={`font-medium text-sm ${th.text}`}>Exportieren</p>
+              <p className={`text-xs ${th.label}`}>Kacheln als JSON-Datei speichern</p>
+            </div>
+          </button>
+          <label className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors cursor-pointer ${th.themeInactiveBg}`}>
+            <span className="text-2xl">📥</span>
+            <div className="text-left">
+              <p className={`font-medium text-sm ${th.text}`}>Importieren</p>
+              <p className={`text-xs ${th.label}`}>Kacheln aus JSON-Datei laden</p>
+            </div>
+            <input type="file" accept=".json" className="hidden" onChange={(e) => { importTiles(e); setShowBackup(false) }} />
+          </label>
+        </div>
+      </div>
+    </div>
+  )}
   {showHelp && (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4" onClick={() => setShowHelp(false)}>
       <div className={`rounded-2xl w-full max-w-lg border shadow-2xl overflow-hidden ${th.modal}`} onClick={e => e.stopPropagation()}>
         <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'rgba(255,255,255,0.1)' }}>
-          <h3 className={`text-lg font-bold flex items-center gap-2 ${th.text}`}>❓ Anleitung & Tutorial</h3>
+          <h3 className={`text-lg font-bold flex items-center gap-2 ${th.text}`}>❓ Anleitung</h3>
           <button className={`p-1.5 rounded-lg transition-colors border ${th.btn}`} onClick={() => setShowHelp(false)}>✕</button>
         </div>
         <div className="overflow-y-auto max-h-[70vh] px-6 py-4 space-y-5">
@@ -538,13 +602,13 @@ export default function LinkDashboard() {
             </div>
           ))}
         </div>
-        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 1.8 • RHEINISCHE ROST Dashboard</div>
+        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 2.0 • RHEINISCHE ROST Dashboard</div>
       </div>
     </div>
   )}
   {showAdd && <TileForm tile={newTile} setTile={setNewTile} onSave={addTile} onCancel={() => setShowAdd(false)} saveLabel="Hinzufügen" th={th} />}
       {editingTile && <TileForm tile={editingTile} setTile={setEditingTile} onSave={updateTile} onCancel={() => setEditingTile(null)} saveLabel="Speichern" th={th} />}
-      <footer className={`text-center py-6 text-xs ${th.footer}`}>{tiles.length} Kacheln • Dashboard</footer>
+      <footer className={`text-center py-6 text-xs ${th.footer}`}>{tiles.length} Kacheln{tiles.filter(t => t.favorite).length > 0 ? ` • ${tiles.filter(t => t.favorite).length} Favoriten` : ''} • Dashboard</footer>
     </div>
   )
 }
