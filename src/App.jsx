@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react"
 
 const defaultTiles = [
-  { id: 11, title: "RP Einkauf", url: "https://rp.sharepoint.com/sites/Einkauf", color: "#0078D4", size: "medium", newTab: true, icon: "🛒", showUrl: false },
-  { id: 10, title: "RP Intranet", url: "https://intranet.rheinischepostmediengruppe.de/home", color: "#E30613", size: "medium", newTab: true, icon: "🏢", showUrl: false },
-  { id: 9, title: "Langdock", url: "https://app.langdock.com/chat", color: "#6366F1", size: "medium", newTab: true, icon: "🤖", showUrl: false },
-  { id: 1, title: "Google", url: "https://google.com", color: "#4285F4", size: "medium", newTab: true, icon: "🔍", showUrl: false },
-  { id: 4, title: "RP Online", url: "https://rp-online.de", color: "#F5C800", size: "medium", newTab: true, icon: "📰", showUrl: false },
-  { id: 7, title: "Jira", url: "https://promgm.atlassian.net/jira/software/c/projects/S4HANA/boards/1522", color: "#0052CC", size: "medium", newTab: true, icon: "jira", showUrl: false },
-  { id: 6, title: "Ariba", url: "https://s1-eu.ariba.com/Sourcing/Main/aw?awh=r&awssk=4ZKLv3K6vaB.A7cf&realm=745237532-T&passwordadapter=ThirdPartyUser&dard=1#b0", color: "#00B7F0", size: "medium", newTab: true, icon: "ariba", showUrl: false },
-  { id: 8, title: "RP E-Paper", url: "https://epaper.rp-online.de", color: "#1a1a1a", size: "medium", newTab: true, icon: "📄", showUrl: false },
-  { id: 5, title: "SAP Test", url: "https://my424364.s4hana.cloud.sap/ui#Shell-home", color: "#0070F2", size: "medium", newTab: true, icon: "🔷", showUrl: false },
+  { id: 11, title: "RP Einkauf", favorite: false, url: "https://rp.sharepoint.com/sites/Einkauf", color: "#0078D4", size: "medium", newTab: true, icon: "🛒", showUrl: false },
+  { id: 10, title: "RP Intranet", favorite: false, url: "https://intranet.rheinischepostmediengruppe.de/home", color: "#E30613", size: "medium", newTab: true, icon: "🏢", showUrl: false },
+  { id: 9, title: "Langdock", favorite: false, url: "https://app.langdock.com/chat", color: "#6366F1", size: "medium", newTab: true, icon: "🤖", showUrl: false },
+  { id: 1, title: "Google", favorite: false, url: "https://google.com", color: "#4285F4", size: "medium", newTab: true, icon: "🔍", showUrl: false },
+  { id: 4, title: "RP Online", favorite: false, url: "https://rp-online.de", color: "#F5C800", size: "medium", newTab: true, icon: "📰", showUrl: false },
+  { id: 7, title: "Jira", favorite: false, url: "https://promgm.atlassian.net/jira/software/c/projects/S4HANA/boards/1522", color: "#0052CC", size: "medium", newTab: true, icon: "jira", showUrl: false },
+  { id: 6, title: "Ariba", favorite: false, url: "https://s1-eu.ariba.com/Sourcing/Main/aw?awh=r&awssk=4ZKLv3K6vaB.A7cf&realm=745237532-T&passwordadapter=ThirdPartyUser&dard=1#b0", color: "#00B7F0", size: "medium", newTab: true, icon: "ariba", showUrl: false },
+  { id: 8, title: "RP E-Paper", favorite: false, url: "https://epaper.rp-online.de", color: "#1a1a1a", size: "medium", newTab: true, icon: "📄", showUrl: false },
+  { id: 5, title: "SAP Test", favorite: false, url: "https://my424364.s4hana.cloud.sap/ui#Shell-home", color: "#0070F2", size: "medium", newTab: true, icon: "🔷", showUrl: false },
 ]
 
 const colorPresets = ["#4285F4","#FF0000","#24292e","#0A66C2","#1DA1F2","#FF4500","#34A853","#7C3AED","#EC4899","#F59E0B","#10B981","#6366F1","#0EA5E9","#D946EF","#84CC16"]
@@ -46,6 +46,7 @@ const themes = {
 }
 
 function TileIcon({ icon, isDark }) {
+  if (icon && icon.startsWith("https://")) return <img src={icon} alt="icon" className="mb-2 drop-shadow-lg" style={{ width: 40, height: 40, objectFit: 'contain' }} onError={e => { e.target.style.display='none' }} />
   if (icon === "jira") return (
     <svg viewBox="0 0 32 32" className="mb-2 drop-shadow-lg" style={{ width: 40, height: 40 }}>
       <defs>
@@ -81,7 +82,16 @@ function TileForm({ tile, setTile, onSave, onCancel, saveLabel, th }) {
           </div>
           <div>
             <label className={`block text-sm font-medium mb-1 ${th.label}`}>Icon / Emoji</label>
-            <input className={`w-full rounded-lg px-4 py-2.5 border focus:border-blue-500 focus:outline-none ${th.modalInput}`} value={tile.icon} onChange={e => setTile({ ...tile, icon: e.target.value })} placeholder="🔗" />
+            <div className="flex gap-2">
+              <input className={`flex-1 rounded-lg px-4 py-2.5 border focus:border-blue-500 focus:outline-none ${th.modalInput}`} value={tile.icon} onChange={e => setTile({ ...tile, icon: e.target.value })} placeholder="🔗" />
+              <button className={`px-3 py-2 rounded-lg text-sm border transition-colors ${th.btn}`} title="Favicon automatisch laden" onClick={() => {
+                try {
+                  const url = tile.url.startsWith('http') ? tile.url : 'https://' + tile.url
+                  const domain = new URL(url).hostname
+                  setTile({ ...tile, icon: `https://www.google.com/s2/favicons?domain=${domain}&sz=64` })
+                } catch { alert('Bitte zuerst eine gültige URL eingeben.') }
+              }}>🌐 Favicon</button>
+            </div>
           </div>
           <div>
             <label className={`block text-sm font-medium mb-2 ${th.label}`}>Farbe</label>
@@ -124,7 +134,7 @@ function TileForm({ tile, setTile, onSave, onCancel, saveLabel, th }) {
   )
 }
 
-function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSettings, setEditingTile, deleteTile, th }) {
+function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSettings, setEditingTile, deleteTile, toggleFavorite, th }) {
   const [isDragOver, setIsDragOver] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const dragStart = (e) => { e.dataTransfer.setData("tileIndex", index); setIsDragging(true) }
@@ -166,11 +176,13 @@ function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSetting
       )}
       {showSettings && (
         <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center gap-2 z-10">
+          <button className={`p-2 rounded-lg text-sm transition-colors ${tile.favorite ? 'bg-yellow-400 bg-opacity-90 hover:bg-opacity-100' : 'bg-white bg-opacity-20 hover:bg-opacity-40'} text-white`} onClick={e => { e.preventDefault(); toggleFavorite(tile.id) }} title={tile.favorite ? 'Favorit entfernen' : 'Als Favorit markieren'}>⭐</button>
           <button className="bg-white bg-opacity-20 hover:bg-opacity-40 text-white p-2 rounded-lg text-sm" onClick={e => { e.preventDefault(); setEditingTile({ ...tile }) }}>✏️</button>
           <button className="bg-red-600 bg-opacity-80 hover:bg-opacity-100 text-white p-2 rounded-lg text-sm" onClick={e => { e.preventDefault(); deleteTile(tile.id) }}>🗑️</button>
         </div>
       )}
-      {tile.newTab && <span className="absolute top-2 right-2 text-xs" style={{ color: isDark ? "rgba(255,255,255,0.4)" : tile.color + "88" }}>↗</span>}
+      {tile.favorite && <span className="absolute top-2 left-2 text-sm">⭐</span>}
+      {tile.newTab && <span className={`absolute text-xs ${tile.favorite ? 'top-2 right-2' : 'top-2 right-2'}`} style={{ color: isDark ? "rgba(255,255,255,0.4)" : tile.color + "88" }}>↗</span>}
     </a>
   )
 }
@@ -213,7 +225,11 @@ export default function LinkDashboard() {
   const [newTile, setNewTile] = useState({ title: "", url: "", color: "#4285F4", size: "medium", newTab: true, icon: "🔗", showUrl: false })
   const [searchQuery, setSearchQuery] = useState("")
 
-  const filteredTiles = tiles.filter(tile => tile.title.toLowerCase().includes(searchQuery.toLowerCase()))
+  const toggleFavorite = (id) => setTiles(tiles.map(t => t.id === id ? { ...t, favorite: !t.favorite } : t))
+
+  const filteredTiles = tiles
+    .filter(tile => tile.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) => (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0))
   const sizeClasses = { small: "col-span-1 h-32", medium: "col-span-1 h-40", large: "col-span-2 h-40" }
 
   const addTile = () => {
@@ -257,6 +273,12 @@ export default function LinkDashboard() {
     updated.splice(to, 0, moved)
     setTiles(updated)
   }
+
+  const [listView, setListView] = useState(() => localStorage.getItem("rp-list-view") === "true")
+
+  useEffect(() => {
+    localStorage.setItem("rp-list-view", listView)
+  }, [listView])
 
   const [showSearch, setShowSearch] = useState(() => localStorage.getItem("rp-show-search") !== "false")
 
@@ -322,7 +344,7 @@ export default function LinkDashboard() {
             </div>
             <div className={`ml-4 pl-4 border-l ${th.divider} flex flex-col justify-center`}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 1.6</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 1.7</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -360,6 +382,12 @@ export default function LinkDashboard() {
                       </div>
                       <span>🔍</span> Suchfeld anzeigen
                     </label>
+                    <label className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors cursor-pointer ${th.themeInactiveBg}`} onClick={e => e.stopPropagation()}>
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${listView ? 'bg-blue-600 border-blue-600' : 'border-gray-400 bg-transparent'}`} onClick={() => setListView(!listView)}>
+                        {listView && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                      </div>
+                      <span>📋</span> Listenansicht
+                    </label>
                     <button className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors ${showSettings ? th.themeActiveBg : th.themeInactiveBg}`} onClick={() => { setShowSettings(!showSettings); setShowSettingsMenu(false) }}>
                       <span>✏️</span> {showSettings ? "Bearbeiten beenden" : "Kacheln bearbeiten"}
                     </button>
@@ -393,6 +421,49 @@ export default function LinkDashboard() {
             <p className="text-lg">Keine Kacheln gefunden.</p>
             <button className="mt-4 text-blue-400 hover:text-blue-300 text-sm" onClick={() => { setSearchQuery(""); setShowAdd(true) }}>Neue Kachel hinzufügen</button>
           </div>
+        ) : listView ? (
+          <div className={`rounded-2xl border overflow-hidden ${th.panelBg}`}>
+            {filteredTiles.map((tile, index) => (
+              <a
+                key={tile.id}
+                href={showSettings ? undefined : tile.url}
+                target={tile.newTab ? "_blank" : "_self"}
+                rel="noopener noreferrer"
+                onClick={e => { if (showSettings) e.preventDefault() }}
+                className={`flex items-center gap-4 px-4 py-3 transition-colors hover:bg-opacity-10 hover:bg-blue-400 ${index !== 0 ? `border-t ${th.divider}` : ''}`}
+              >
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: `linear-gradient(135deg, ${tile.color}, ${tile.color}cc)` }}>
+  {tile.icon && tile.icon.startsWith('https://') ? (
+                    <img src={tile.icon} alt="icon" style={{ width: 24, height: 24, objectFit: 'contain' }} />
+                  ) : tile.icon === 'ariba' ? (
+                    <span style={{ fontSize: 11, fontWeight: 700, color: '#fff', letterSpacing: '-0.5px', lineHeight: 1 }}>ariba</span>
+                  ) : tile.icon === 'jira' ? (
+                    <svg viewBox="0 0 32 32" style={{ width: 24, height: 24 }}>
+                      <defs><linearGradient id="jiraGrad2" x1="100%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stopColor="#2684FF" /><stop offset="100%" stopColor="#0052CC" /></linearGradient></defs>
+                      <path d="M15.98 0.16L8.1 8.04 3.9 3.84a1.3 1.3 0 00-1.84 0L.16 5.74a1.3 1.3 0 000 1.84l7.02 7.02-7.02 7.02a1.3 1.3 0 000 1.84l1.9 1.9a1.3 1.3 0 001.84 0l4.2-4.2 7.88 7.88a1.3 1.3 0 001.84 0l1.9-1.9a1.3 1.3 0 000-1.84L11.7 17.28l4.28-4.28 7.88-7.88a1.3 1.3 0 000-1.84L21.96.16a1.3 1.3 0 00-1.84 0z" fill="url(#jiraGrad2)" transform="translate(4,4) scale(0.9)" />
+                    </svg>
+                  ) : (
+                    <span style={{ fontSize: 20 }}>{tile.icon}</span>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className={`font-medium text-sm flex items-center gap-1 ${th.text}`}>
+                    {tile.favorite && <span className="text-xs">⭐</span>}
+                    {tile.title}
+                    {tile.newTab && <span className="text-xs opacity-40">↗</span>}
+                  </div>
+                  <div className={`text-xs truncate ${th.subtext}`}>{tile.url.replace(/https?:\/\//, '').replace(/\/$/, '')}</div>
+                </div>
+                {showSettings && (
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <button className={`p-1.5 rounded-lg text-sm transition-colors ${tile.favorite ? 'bg-yellow-400 text-white' : `border ${th.btn}`}`} onClick={e => { e.preventDefault(); toggleFavorite(tile.id) }}>⭐</button>
+                    <button className={`p-1.5 rounded-lg text-sm border transition-colors ${th.btn}`} onClick={e => { e.preventDefault(); setEditingTile({ ...tile }) }}>✏️</button>
+                    <button className="p-1.5 rounded-lg text-sm bg-red-600 bg-opacity-80 hover:bg-opacity-100 text-white transition-colors" onClick={e => { e.preventDefault(); deleteTile(tile.id) }}>🗑️</button>
+                  </div>
+                )}
+              </a>
+            ))}
+          </div>
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filteredTiles.map((tile, index) => (
@@ -413,6 +484,7 @@ export default function LinkDashboard() {
                   showSettings={showSettings}
                   setEditingTile={setEditingTile}
                   deleteTile={deleteTile}
+                  toggleFavorite={toggleFavorite}
                   th={th}
                 />
               </div>
