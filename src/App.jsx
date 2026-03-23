@@ -292,12 +292,12 @@ export default function LinkDashboard() {
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex flex-col leading-none select-none">
-              <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 900, fontSize: "1.35rem", letterSpacing: "-0.01em", color: th.logoText, lineHeight: 1.1 }}>RHEINISCHE POST</span>
-              <div style={{ height: "4px", background: "#F5C800", borderRadius: "1px", marginTop: "3px" }} />
+              <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 900, fontSize: "1.35rem", letterSpacing: "-0.01em", color: th.logoText, lineHeight: 1.1 }}>RHEINISCHE ROST</span>
+              <div style={{ height: "4px", background: "#F97316", borderRadius: "1px", marginTop: "3px" }} />
             </div>
             <div className={`ml-4 pl-4 border-l ${th.divider} flex flex-col justify-center`}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 1.3</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 1.4</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
