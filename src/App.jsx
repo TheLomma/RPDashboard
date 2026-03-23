@@ -138,7 +138,7 @@ function TileForm({ tile, setTile, onSave, onCancel, saveLabel, th }) {
   )
 }
 
-function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSettings, setEditingTile, deleteTile, toggleFavorite, updateTileColor, th }) {
+function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSettings, setEditingTile, deleteTile, toggleFavorite, updateTileColor, duplicateTile, th }) {
   const [isDragOver, setIsDragOver] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const dragStart = (e) => { e.dataTransfer.setData("tileIndex", index); setIsDragging(true) }
@@ -182,11 +182,15 @@ function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSetting
         </span>
       )}
       {showSettings && (
-        <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center gap-2 z-10">
+        <div className="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center gap-1.5 z-10 p-2">
+          <span className="text-white text-xs font-semibold text-center truncate max-w-full opacity-80 mb-1">{tile.title}</span>
+          <div className="flex gap-1.5">
           <button className={`p-2 rounded-lg text-sm transition-colors ${tile.favorite ? 'bg-yellow-400 bg-opacity-90 hover:bg-opacity-100' : 'bg-white bg-opacity-20 hover:bg-opacity-40'} text-white`} onClick={e => { e.preventDefault(); toggleFavorite(tile.id) }} title={tile.favorite ? 'Favorit entfernen' : 'Als Favorit markieren'}>⭐</button>
-          <label className="bg-white bg-opacity-20 hover:bg-opacity-40 text-white p-2 rounded-lg text-sm cursor-pointer flex items-center justify-center" title="Farbe ändern" onClick={e => e.stopPropagation()}>🎨<input type="color" className="w-0 h-0 opacity-0 absolute" value={tile.color} onChange={e => updateTileColor(tile.id, e.target.value)} /></label>
-          <button className="bg-white bg-opacity-20 hover:bg-opacity-40 text-white p-2 rounded-lg text-sm" onClick={e => { e.preventDefault(); setEditingTile({ ...tile }) }}>✏️</button>
-          <button className="bg-red-600 bg-opacity-80 hover:bg-opacity-100 text-white p-2 rounded-lg text-sm" onClick={e => { e.preventDefault(); deleteTile(tile.id) }}>🗑️</button>
+            <label className="bg-white bg-opacity-20 hover:bg-opacity-40 text-white p-2 rounded-lg text-sm cursor-pointer flex items-center justify-center" title="Farbe ändern" onClick={e => e.stopPropagation()}>🎨<input type="color" className="w-0 h-0 opacity-0 absolute" value={tile.color} onChange={e => updateTileColor(tile.id, e.target.value)} /></label>
+            <button className="bg-white bg-opacity-20 hover:bg-opacity-40 text-white p-2 rounded-lg text-sm" onClick={e => { e.preventDefault(); setEditingTile({ ...tile }) }}>✏️</button>
+            <button className="bg-white bg-opacity-20 hover:bg-opacity-40 text-white p-2 rounded-lg text-sm" title="Kachel duplizieren" onClick={e => { e.preventDefault(); duplicateTile(tile) }}>⧉</button>
+            <button className="bg-red-600 bg-opacity-80 hover:bg-opacity-100 text-white p-2 rounded-lg text-sm" onClick={e => { e.preventDefault(); deleteTile(tile.id) }}>🗑️</button>
+          </div>
         </div>
       )}
       {tile.favorite && <span className="absolute top-2 left-2 text-sm">⭐</span>}
@@ -235,6 +239,16 @@ export default function LinkDashboard() {
 
   const toggleFavorite = (id) => setTiles(tiles.map(t => t.id === id ? { ...t, favorite: !t.favorite } : t))
   const updateTileColor = (id, color) => setTiles(tiles.map(t => t.id === id ? { ...t, color } : t))
+  const duplicateTile = (tile) => {
+    const newId = Date.now()
+    const copy = { ...tile, id: newId, title: tile.title + ' (Kopie)' }
+    const idx = tiles.findIndex(t => t.id === tile.id)
+    const updated = [...tiles]
+    updated.splice(idx + 1, 0, copy)
+    setTiles(updated)
+    setAddingId(newId)
+    setTimeout(() => setAddingId(null), 400)
+  }
 
   const filteredTiles = tiles
     .filter(tile => tile.title.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -359,7 +373,7 @@ export default function LinkDashboard() {
             </div>
             <div className={`ml-4 pl-4 border-l ${th.divider} flex flex-col justify-center`}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 2.2</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 2.3</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -505,6 +519,7 @@ export default function LinkDashboard() {
                   deleteTile={deleteTile}
                   toggleFavorite={toggleFavorite}
                   updateTileColor={updateTileColor}
+                  duplicateTile={duplicateTile}
                   th={th}
                 />
               </div>
@@ -607,7 +622,7 @@ export default function LinkDashboard() {
             </div>
           ))}
         </div>
-        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 2.2 • RHEINISCHE ROST Dashboard</div>
+        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 2.3 • RHEINISCHE ROST Dashboard</div>
       </div>
     </div>
   )}
