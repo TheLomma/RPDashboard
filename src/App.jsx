@@ -170,7 +170,7 @@ function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSetting
       onDragLeave={dragLeave}
       onDrop={drop}
       onClick={e => { if (showSettings) e.preventDefault() }}
-      className={`${sizeClasses[tile.size]} relative group rounded-2xl overflow-hidden flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-40 scale-95' : ''} ${isDragOver ? 'scale-105 ring-4 ring-blue-400 ring-opacity-80' : ''}`}
+      className={`${sizeClasses[tile.size]} relative group rounded-2xl overflow-hidden flex flex-col items-center justify-center transition-all duration-300 hover:scale-105 hover:shadow-2xl cursor-grab active:cursor-grabbing ${isDragging ? 'opacity-40 scale-95' : ''} ${isDragOver ? 'scale-105 ring-4 ring-blue-400 ring-opacity-80' : ''} ${tile.hidden ? 'opacity-40' : ''}`}
       style={{
         background: isDark ? `linear-gradient(135deg, ${tile.color}, ${tile.color}cc)` : "#ffffff",
         border: isDark ? `1px solid rgba(255,255,255,0.1)` : `2px solid ${tile.color}`,
@@ -196,6 +196,7 @@ function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSetting
             <label className="bg-white bg-opacity-20 hover:bg-opacity-40 text-white p-2 rounded-lg text-sm cursor-pointer flex items-center justify-center" title="Farbe ändern" onClick={e => e.stopPropagation()}>🎨<input type="color" className="w-0 h-0 opacity-0 absolute" value={tile.color} onChange={e => updateTileColor(tile.id, e.target.value)} /></label>
             <button className="bg-white bg-opacity-20 hover:bg-opacity-40 text-white p-2 rounded-lg text-sm" onClick={e => { e.preventDefault(); setEditingTile({ ...tile }) }}>✏️</button>
             <button className="bg-white bg-opacity-20 hover:bg-opacity-40 text-white p-2 rounded-lg text-sm" title="Kachel duplizieren" onClick={e => { e.preventDefault(); duplicateTile(tile) }}>⧉</button>
+            <button className={`p-2 rounded-lg text-sm transition-colors ${tile.hidden ? 'bg-gray-500 bg-opacity-80 hover:bg-opacity-100 text-white' : 'bg-white bg-opacity-20 hover:bg-opacity-40 text-white'}`} title={tile.hidden ? 'Einblenden' : 'Ausblenden'} onClick={e => { e.preventDefault(); toggleHiddenTile(tile.id) }}>{tile.hidden ? '🙈' : '👁️'}</button>
             <button className="bg-red-600 bg-opacity-80 hover:bg-opacity-100 text-white p-2 rounded-lg text-sm" onClick={e => { e.preventDefault(); deleteTile(tile.id) }}>🗑️</button>
           </div>
         </div>
@@ -244,6 +245,28 @@ export default function LinkDashboard() {
   const [newTile, setNewTile] = useState({ title: "", url: "", color: "#4285F4", size: "medium", newTab: true, icon: "🔗", showUrl: false, description: "", group: "" })
   const [searchQuery, setSearchQuery] = useState("")
 
+  const [showSearch, setShowSearch] = useState(() => localStorage.getItem("rp-show-search") === "true")
+  const [showGroups, setShowGroups] = useState(() => localStorage.getItem("rp-show-groups") === "true")
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [showHidden, setShowHidden] = useState(false)
+  const [showFullscreenBtn, setShowFullscreenBtn] = useState(() => localStorage.getItem("rp-show-fullscreen") === "true")
+
+  useEffect(() => {
+    const handler = () => setIsFullscreen(!!document.fullscreenElement)
+    document.addEventListener("fullscreenchange", handler)
+    return () => document.removeEventListener("fullscreenchange", handler)
+  }, [])
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {})
+    } else {
+      document.exitFullscreen().catch(() => {})
+    }
+  }
+
+  const toggleHiddenTile = (id) => setTiles(tiles.map(t => t.id === id ? { ...t, hidden: !t.hidden } : t))
+
   const toggleFavorite = (id) => setTiles(tiles.map(t => t.id === id ? { ...t, favorite: !t.favorite } : t))
   const updateTileColor = (id, color) => setTiles(tiles.map(t => t.id === id ? { ...t, color } : t))
   const duplicateTile = (tile) => {
@@ -259,6 +282,7 @@ export default function LinkDashboard() {
 
   const filteredTiles = tiles
     .filter(tile => tile.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter(tile => showHidden || !tile.hidden)
     .sort((a, b) => (b.favorite ? 1 : 0) - (a.favorite ? 1 : 0))
 
   const groups = [...new Set(filteredTiles.map(t => t.group || ""))]
@@ -313,9 +337,6 @@ export default function LinkDashboard() {
     localStorage.setItem("rp-list-view", listView)
   }, [listView])
 
-  const [showSearch, setShowSearch] = useState(() => localStorage.getItem("rp-show-search") === "true")
-  const [showGroups, setShowGroups] = useState(() => localStorage.getItem("rp-show-groups") === "true")
-
   useEffect(() => {
     localStorage.setItem("rp-show-search", showSearch)
   }, [showSearch])
@@ -323,6 +344,10 @@ export default function LinkDashboard() {
   useEffect(() => {
     localStorage.setItem("rp-show-groups", showGroups)
   }, [showGroups])
+
+  useEffect(() => {
+    localStorage.setItem("rp-show-fullscreen", showFullscreenBtn)
+  }, [showFullscreenBtn])
 
   const resetTiles = () => {
     if (window.confirm("Alle Kacheln auf Standard zurücksetzen?")) {
@@ -388,7 +413,7 @@ export default function LinkDashboard() {
             </div>
             <div className={`ml-4 pl-4 border-l ${th.divider} flex flex-col justify-center`}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 2.4</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 2.5</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -398,6 +423,7 @@ export default function LinkDashboard() {
               <span className="absolute left-3 top-2.5 text-gray-500">🔍</span>
             </div>
             )}
+            {showFullscreenBtn && <button className={`px-4 py-2.5 rounded-xl transition-colors border text-sm font-medium ${isFullscreen ? 'bg-blue-600 border-blue-600 text-white' : th.btn}`} onClick={e => { e.stopPropagation(); toggleFullscreen() }}>{isFullscreen ? 'Vollbild ✕' : 'Vollbild'}</button>}
             <button className={`p-2.5 rounded-xl transition-colors border text-sm ${showSettings ? 'bg-blue-600 border-blue-600 text-white' : th.btn}`} title={showSettings ? 'Bearbeiten beenden' : 'Kacheln bearbeiten'} onClick={e => { e.stopPropagation(); setShowSettings(!showSettings); setShowSettingsMenu(false) }}>✏️</button>
             <button className="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2.5 rounded-xl transition-colors flex items-center gap-2 shadow-lg" onClick={e => { e.stopPropagation(); setShowAdd(true) }}>
               <span className="text-lg leading-none">+</span> Neue Kachel
@@ -437,7 +463,19 @@ export default function LinkDashboard() {
                       <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${showGroups ? 'bg-blue-600 border-blue-600' : 'border-gray-400 bg-transparent'}`} onClick={() => { setShowGroups(!showGroups); setShowSettingsMenu(false) }}>
                         {showGroups && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
                       </div>
-                      <span>🗂️</span> Gruppen anzeigen
+                        <span>🗂️</span> Gruppen anzeigen
+                    </label>
+                    <label className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors cursor-pointer ${th.themeInactiveBg}`} onClick={e => e.stopPropagation()}>
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${showHidden ? 'bg-blue-600 border-blue-600' : 'border-gray-400 bg-transparent'}`} onClick={() => { setShowHidden(!showHidden); setShowSettingsMenu(false) }}>
+                        {showHidden && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                      </div>
+                      <span>👁️</span> Versteckte anzeigen
+                    </label>
+                    <label className={`w-full text-left px-3 py-2 rounded-lg text-sm flex items-center gap-2 transition-colors cursor-pointer ${th.themeInactiveBg}`} onClick={e => e.stopPropagation()}>
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${showFullscreenBtn ? 'bg-blue-600 border-blue-600' : 'border-gray-400 bg-transparent'}`} onClick={() => { setShowFullscreenBtn(!showFullscreenBtn); setShowSettingsMenu(false) }}>
+                        {showFullscreenBtn && <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
+                      </div>
+                      <span>⛶</span> Vollbild-Button
                     </label>
 
                     <div className={`my-1 border-t ${th.divider}`} />
@@ -521,6 +559,7 @@ export default function LinkDashboard() {
                   <div className="flex items-center gap-2 flex-shrink-0">
                     <button className={`p-1.5 rounded-lg text-sm transition-colors ${tile.favorite ? 'bg-yellow-400 text-white' : `border ${th.btn}`}`} onClick={e => { e.preventDefault(); toggleFavorite(tile.id) }}>⭐</button>
                     <button className={`p-1.5 rounded-lg text-sm border transition-colors ${th.btn}`} onClick={e => { e.preventDefault(); setEditingTile({ ...tile }) }}>✏️</button>
+                    <button className={`p-1.5 rounded-lg text-sm transition-colors border ${tile.hidden ? 'bg-gray-500 text-white border-gray-500' : th.btn}`} title={tile.hidden ? 'Einblenden' : 'Ausblenden'} onClick={e => { e.preventDefault(); toggleHiddenTile(tile.id) }}>{tile.hidden ? '🙈' : '👁️'}</button>
                     <button className="p-1.5 rounded-lg text-sm bg-red-600 bg-opacity-80 hover:bg-opacity-100 text-white transition-colors" onClick={e => { e.preventDefault(); deleteTile(tile.id) }}>🗑️</button>
                   </div>
                 )}
@@ -667,7 +706,7 @@ export default function LinkDashboard() {
             </div>
           ))}
         </div>
-        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 2.4 • RHEINISCHE ROST Dashboard</div>
+        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 2.5 • RHEINISCHE ROST Dashboard</div>
       </div>
     </div>
   )}
