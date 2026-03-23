@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react"
 
 const defaultTiles = [
-  { id: 11, title: "RP Einkauf", favorite: false, url: "https://rp.sharepoint.com/sites/Einkauf", color: "#0078D4", size: "medium", newTab: true, icon: "🛒", showUrl: false },
-  { id: 10, title: "RP Intranet", favorite: false, url: "https://intranet.rheinischepostmediengruppe.de/home", color: "#E30613", size: "medium", newTab: true, icon: "🏢", showUrl: false },
-  { id: 9, title: "Langdock", favorite: false, url: "https://app.langdock.com/chat", color: "#6366F1", size: "medium", newTab: true, icon: "🤖", showUrl: false },
-  { id: 1, title: "Google", favorite: false, url: "https://google.com", color: "#4285F4", size: "medium", newTab: true, icon: "🔍", showUrl: false },
-  { id: 4, title: "RP Online", favorite: false, url: "https://rp-online.de", color: "#F5C800", size: "medium", newTab: true, icon: "📰", showUrl: false },
-  { id: 7, title: "Jira", favorite: false, url: "https://promgm.atlassian.net/jira/software/c/projects/S4HANA/boards/1522", color: "#0052CC", size: "medium", newTab: true, icon: "jira", showUrl: false },
-  { id: 6, title: "Ariba", favorite: false, url: "https://s1-eu.ariba.com/Sourcing/Main/aw?awh=r&awssk=4ZKLv3K6vaB.A7cf&realm=745237532-T&passwordadapter=ThirdPartyUser&dard=1#b0", color: "#00B7F0", size: "medium", newTab: true, icon: "ariba", showUrl: false },
-  { id: 8, title: "RP E-Paper", favorite: false, url: "https://epaper.rp-online.de", color: "#1a1a1a", size: "medium", newTab: true, icon: "📄", showUrl: false },
-  { id: 5, title: "SAP Test", favorite: false, url: "https://my424364.s4hana.cloud.sap/ui#Shell-home", color: "#0070F2", size: "medium", newTab: true, icon: "🔷", showUrl: false },
+  { id: 11, title: "RP Einkauf", description: "", favorite: false, url: "https://rp.sharepoint.com/sites/Einkauf", color: "#0078D4", size: "medium", newTab: true, icon: "🛒", showUrl: false },
+  { id: 10, title: "RP Intranet", description: "", favorite: false, url: "https://intranet.rheinischepostmediengruppe.de/home", color: "#E30613", size: "medium", newTab: true, icon: "🏢", showUrl: false },
+  { id: 9, title: "Langdock", description: "", favorite: false, url: "https://app.langdock.com/chat", color: "#6366F1", size: "medium", newTab: true, icon: "🤖", showUrl: false },
+  { id: 1, title: "Google", description: "", favorite: false, url: "https://google.com", color: "#4285F4", size: "medium", newTab: true, icon: "🔍", showUrl: false },
+  { id: 4, title: "RP Online", description: "", favorite: false, url: "https://rp-online.de", color: "#F5C800", size: "medium", newTab: true, icon: "📰", showUrl: false },
+  { id: 7, title: "Jira", description: "", favorite: false, url: "https://promgm.atlassian.net/jira/software/c/projects/S4HANA/boards/1522", color: "#0052CC", size: "medium", newTab: true, icon: "jira", showUrl: false },
+  { id: 6, title: "Ariba", description: "", favorite: false, url: "https://s1-eu.ariba.com/Sourcing/Main/aw?awh=r&awssk=4ZKLv3K6vaB.A7cf&realm=745237532-T&passwordadapter=ThirdPartyUser&dard=1#b0", color: "#00B7F0", size: "medium", newTab: true, icon: "ariba", showUrl: false },
+  { id: 8, title: "RP E-Paper", description: "", favorite: false, url: "https://epaper.rp-online.de", color: "#1a1a1a", size: "medium", newTab: true, icon: "📄", showUrl: false },
+  { id: 5, title: "SAP Test", description: "", favorite: false, url: "https://my424364.s4hana.cloud.sap/ui#Shell-home", color: "#0070F2", size: "medium", newTab: true, icon: "🔷", showUrl: false },
 ]
 
 const colorPresets = ["#4285F4","#FF0000","#24292e","#0A66C2","#1DA1F2","#FF4500","#34A853","#7C3AED","#EC4899","#F59E0B","#10B981","#6366F1","#0EA5E9","#D946EF","#84CC16"]
@@ -112,6 +112,10 @@ function TileForm({ tile, setTile, onSave, onCancel, saveLabel, th }) {
               ))}
             </div>
           </div>
+          <div>
+            <label className={`block text-sm font-medium mb-1 ${th.label}`}>Beschreibung <span className="font-normal opacity-60">(optional)</span></label>
+            <input className={`w-full rounded-lg px-4 py-2.5 border focus:border-blue-500 focus:outline-none ${th.modalInput}`} value={tile.description || ""} onChange={e => setTile({ ...tile, description: e.target.value })} placeholder="Kurze Notiz…" />
+          </div>
           <label className="flex items-center gap-3 py-2 cursor-pointer select-none">
             <div className={`w-6 h-6 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${tile.showUrl ? 'bg-blue-600 border-blue-600' : 'border-gray-400 bg-transparent'}`} onClick={() => setTile({ ...tile, showUrl: !tile.showUrl })}>
               {tile.showUrl && <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg>}
@@ -169,6 +173,9 @@ function DraggableTile({ tile, index, moveTile, isDark, sizeClasses, showSetting
       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all" />
       <TileIcon icon={tile.icon} isDark={isDark} />
       <span className="font-semibold text-sm tracking-wide" style={{ color: isDark ? "#fff" : tile.color }}>{tile.title}</span>
+      {tile.description && (
+        <span className="text-xs mt-1 px-3 text-center opacity-70" style={{ color: isDark ? "rgba(255,255,255,0.6)" : tile.color + "bb" }}>{tile.description}</span>
+      )}
       {tile.showUrl && (
         <span className="text-xs mt-1 truncate max-w-full px-4" style={{ color: isDark ? "rgba(255,255,255,0.5)" : tile.color + "99" }}>
           {tile.url.replace(/https?:\/\//, "").replace(/\/$/, "")}
@@ -223,7 +230,7 @@ export default function LinkDashboard() {
   const [showSettings, setShowSettings] = useState(false)
   const [editingTile, setEditingTile] = useState(null)
   const [showAdd, setShowAdd] = useState(false)
-  const [newTile, setNewTile] = useState({ title: "", url: "", color: "#4285F4", size: "medium", newTab: true, icon: "🔗", showUrl: false })
+  const [newTile, setNewTile] = useState({ title: "", url: "", color: "#4285F4", size: "medium", newTab: true, icon: "🔗", showUrl: false, description: "" })
   const [searchQuery, setSearchQuery] = useState("")
 
   const toggleFavorite = (id) => setTiles(tiles.map(t => t.id === id ? { ...t, favorite: !t.favorite } : t))
@@ -241,7 +248,7 @@ export default function LinkDashboard() {
     setTiles([...tiles, { ...newTile, url, id: newId }])
     setAddingId(newId)
     setTimeout(() => setAddingId(null), 400)
-    setNewTile({ title: "", url: "", color: "#4285F4", size: "medium", newTab: true, icon: "🔗", showUrl: false })
+    setNewTile({ title: "", url: "", color: "#4285F4", size: "medium", newTab: true, icon: "🔗", showUrl: false, description: "" })
     setShowAdd(false)
   }
 
@@ -352,7 +359,7 @@ export default function LinkDashboard() {
             </div>
             <div className={`ml-4 pl-4 border-l ${th.divider} flex flex-col justify-center`}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 2.1</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 2.2</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -600,7 +607,7 @@ export default function LinkDashboard() {
             </div>
           ))}
         </div>
-        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 2.1 • RHEINISCHE ROST Dashboard</div>
+        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 2.2 • RHEINISCHE ROST Dashboard</div>
       </div>
     </div>
   )}
