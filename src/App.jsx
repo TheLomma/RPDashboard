@@ -5,10 +5,10 @@ const defaultTiles = [
   { id: 10, title: "RP Intranet", description: "", group: "Intern", favorite: false, url: "https://intranet.rheinischepostmediengruppe.de/home", color: "#E30613", size: "medium", newTab: true, icon: "🏢", showUrl: false },
   { id: 9, title: "Langdock", description: "", group: "Tools", favorite: false, url: "https://app.langdock.com/chat", color: "#6366F1", size: "medium", newTab: true, icon: "🤖", showUrl: false },
   { id: 1, title: "Google", description: "", group: "Tools", favorite: false, url: "https://google.com", color: "#4285F4", size: "medium", newTab: true, icon: "🔍", showUrl: false },
-  { id: 4, title: "RP Online", description: "", group: "News", favorite: false, url: "https://rp-online.de", color: "#F5C800", size: "medium", newTab: true, icon: "📰", showUrl: false },
+  { id: 4, title: "RP Online", description: "", group: "News", favorite: false, url: "https://rp-online.de", color: "#E30613", size: "medium", newTab: true, icon: "📰", showUrl: false },
   { id: 7, title: "Jira", description: "", group: "Tools", favorite: false, url: "https://promgm.atlassian.net/jira/software/c/projects/S4HANA/boards/1522", color: "#0052CC", size: "medium", newTab: true, icon: "jira", showUrl: false },
   { id: 6, title: "Ariba", description: "", group: "Intern", favorite: false, url: "https://s1-eu.ariba.com/Sourcing/Main/aw?awh=r&awssk=4ZKLv3K6vaB.A7cf&realm=745237532-T&passwordadapter=ThirdPartyUser&dard=1#b0", color: "#00B7F0", size: "medium", newTab: true, icon: "ariba", showUrl: false },
-  { id: 8, title: "RP E-Paper", description: "", group: "News", favorite: false, url: "https://epaper.rp-online.de", color: "#1a1a1a", size: "medium", newTab: true, icon: "📄", showUrl: false },
+  { id: 8, title: "RP E-Paper", description: "", group: "News", favorite: false, url: "https://epaper.rp-online.de", color: "#E30613", size: "medium", newTab: true, icon: "📄", showUrl: false },
   { id: 5, title: "SAP Test", description: "", group: "Intern", favorite: false, url: "https://my424364.s4hana.cloud.sap/ui#Shell-home", color: "#0070F2", size: "medium", newTab: true, icon: "🔷", showUrl: false },
 ]
 
@@ -427,7 +427,7 @@ export default function LinkDashboard() {
             </div>
             <div className={`ml-4 pl-4 border-l ${th.divider} flex flex-col justify-center`}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 2.7</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 2.8</span>
             </div>
           </div>
           <div className="flex items-center gap-3">
@@ -723,7 +723,7 @@ export default function LinkDashboard() {
             </div>
           ))}
         </div>
-        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 2.7 • RHEINISCHE ROST Dashboard</div>
+        <div className={`px-6 py-4 border-t text-xs text-center ${th.label}`} style={{ borderColor: 'rgba(255,255,255,0.1)' }}>Version 2.8 • RHEINISCHE ROST Dashboard</div>
       </div>
     </div>
   )}
