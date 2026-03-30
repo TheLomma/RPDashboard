@@ -1,18 +1,18 @@
 import { useState, useEffect, useRef } from "react"
 
 const defaultTiles = [
-  { id: 11, title: "RP Einkauf", description: "", group: "Intern", favorite: false, url: "https://rp.sharepoint.com/sites/Einkauf", color: "#0078D4", size: "medium", newTab: true, icon: "🛒", showUrl: false },
-  { id: 10, title: "RP Intranet", description: "", group: "Intern", favorite: false, url: "https://intranet.rheinischepostmediengruppe.de/home", color: "#E30613", size: "medium", newTab: true, icon: "🏢", showUrl: false },
-  { id: 9, title: "Langdock", description: "", group: "Tools", favorite: false, url: "https://app.langdock.com/chat", color: "#6366F1", size: "medium", newTab: true, icon: "🤖", showUrl: false },
-  { id: 1, title: "Google", description: "", group: "Tools", favorite: false, url: "https://google.com", color: "#4285F4", size: "medium", newTab: true, icon: "🔍", showUrl: false },
-  { id: 4, title: "RP Online", description: "", group: "News", favorite: false, url: "https://rp-online.de", color: "#E30613", size: "medium", newTab: true, icon: "📰", showUrl: false },
-  { id: 7, title: "Jira", description: "", group: "Tools", favorite: false, url: "https://promgm.atlassian.net/jira/software/c/projects/S4HANA/boards/1522", color: "#0052CC", size: "medium", newTab: true, icon: "jira", showUrl: false },
-  { id: 6, title: "Ariba", description: "", group: "Intern", favorite: false, url: "https://s1-eu.ariba.com", color: "#00B7F0", size: "medium", newTab: true, icon: "ariba", showUrl: false },
-  { id: 8, title: "RP E-Paper", description: "", group: "News", favorite: false, url: "https://epaper.rp-online.de", color: "#E30613", size: "medium", newTab: true, icon: "📄", showUrl: false },
-  { id: 5, title: "SAP Test", description: "", group: "Intern", favorite: false, url: "https://my424364.s4hana.cloud.sap/ui#Shell-home", color: "#0070F2", size: "medium", newTab: true, icon: "🔷", showUrl: false },
+  { id: 11, title: "RP Einkauf", description: "", group: "Intern", favorite: false, url: "https://rp.sharepoint.com/sites/Einkauf", color: "#1a1a1a", size: "medium", newTab: true, icon: "🛒", showUrl: false },
+  { id: 10, title: "RP Intranet", description: "", group: "Intern", favorite: false, url: "https://intranet.rheinischepostmediengruppe.de/home", color: "#1a1a1a", size: "medium", newTab: true, icon: "🏢", showUrl: false },
+  { id: 9, title: "Langdock", description: "", group: "Tools", favorite: false, url: "https://app.langdock.com/chat", color: "#6b7280", size: "medium", newTab: true, icon: "🤖", showUrl: false },
+  { id: 1, title: "Google", description: "", group: "Tools", favorite: false, url: "https://google.com", color: "#9ca3af", size: "medium", newTab: true, icon: "🔍", showUrl: false },
+  { id: 4, title: "RP Online", description: "", group: "News", favorite: false, url: "https://rp-online.de", color: "#F5C800", size: "medium", newTab: true, icon: "📰", showUrl: false },
+  { id: 7, title: "Jira", description: "", group: "Tools", favorite: false, url: "https://promgm.atlassian.net/jira/software/c/projects/S4HANA/boards/1522", color: "#0A66C2", size: "medium", newTab: true, icon: "jira", showUrl: false },
+  { id: 6, title: "Ariba", description: "", group: "Intern", favorite: false, url: "https://s1-eu.ariba.com", color: "#0078D4", size: "medium", newTab: true, icon: "ariba", showUrl: false },
+  { id: 8, title: "RP E-Paper", description: "", group: "News", favorite: false, url: "https://epaper.rp-online.de", color: "#e6b800", size: "medium", newTab: true, icon: "📄", showUrl: false },
+  { id: 5, title: "SAP Test", description: "", group: "Intern", favorite: false, url: "https://my424364.s4hana.cloud.sap/ui#Shell-home", color: "#1D4ED8", size: "medium", newTab: true, icon: "🔷", showUrl: false },
 ]
 
-const colorPresets = ["#4285F4","#E30613","#24292e","#0A66C2","#1DA1F2","#FF4500","#34A853","#7C3AED","#EC4899","#F5C800","#10B981","#6366F1","#0EA5E9","#D946EF","#84CC16"]
+const colorPresets = ["#4285F4","#E30613","#24292e","#0A66C2","#1DA1F2","#F5C800","#34A853","#7C3AED","#EC4899","#1a1a1a","#10B981","#6366F1","#0EA5E9","#D946EF","#84CC16"]
 
 const RP_YELLOW = "#F5C800"
 const RP_BLACK = "#1a1a1a"
@@ -31,9 +31,9 @@ const glassStyle = {
     panelBorder: `${RP_YELLOW}28`,
     input: "rgba(255,255,255,0.07)",
     inputBorder: "rgba(255,255,255,0.15)",
-    btn: "rgba(255,255,255,0.07)",
-    btnBorder: "rgba(255,255,255,0.15)",
-    btnHover: "rgba(255,255,255,0.13)",
+    btn: "rgba(245,200,0,0.13)",
+    btnBorder: "rgba(245,200,0,0.30)",
+    btnHover: "rgba(245,200,0,0.22)",
   },
   light: {
     card: "rgba(255,255,255,0.75)",
@@ -47,9 +47,9 @@ const glassStyle = {
     panelBorder: `${RP_YELLOW}44`,
     input: "rgba(0,0,0,0.05)",
     inputBorder: "rgba(0,0,0,0.12)",
-    btn: "rgba(0,0,0,0.05)",
-    btnBorder: "rgba(0,0,0,0.12)",
-    btnHover: "rgba(0,0,0,0.09)",
+    btn: "rgba(26,26,26,0.07)",
+    btnBorder: "rgba(26,26,26,0.22)",
+    btnHover: "rgba(26,26,26,0.13)",
   }
 }
 
@@ -556,7 +556,7 @@ export default function LinkDashboard() {
             </div>
             <div className={`ml-4 pl-4 border-l flex flex-col justify-center`} style={{ borderColor: `${RP_YELLOW}55` }}>
               <span style={{ fontFamily: 'Georgia, "Times New Roman", serif', fontWeight: 400, fontSize: "0.95rem", letterSpacing: "0.04em", color: th.appName, lineHeight: 1.2 }}>Dashboard</span>
-              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 3.3</span>
+              <span style={{ fontSize: "0.65rem", letterSpacing: "0.08em", color: th.version, lineHeight: 1.2, marginTop: "1px" }}>Version 3.4</span>
             </div>
           </div>
 
@@ -704,7 +704,7 @@ export default function LinkDashboard() {
       </main>
 
       <footer className="text-center py-6 text-xs" style={{ color: isDark ? '#4b5563' : '#9ca3af' }}>
-        Version 3.2
+        
       </footer>
 
       {/* Modals */}
